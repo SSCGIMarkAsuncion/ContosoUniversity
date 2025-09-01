@@ -11,7 +11,8 @@ namespace ContosoUniversity
 
             // Add EF DbContext with connection string from appsettings.json
             builder.Services.AddDbContext<SchoolContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")).UseLazyLoadingProxies()
+            );
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
