@@ -1,3 +1,6 @@
+using ContosoUniversity.DAL;
+using Microsoft.EntityFrameworkCore;
+
 namespace ContosoUniversity
 {
     public class Program
@@ -6,8 +9,13 @@ namespace ContosoUniversity
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add EF DbContext with connection string from appsettings.json
+            builder.Services.AddDbContext<SchoolContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")));
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
 
             var app = builder.Build();
 
