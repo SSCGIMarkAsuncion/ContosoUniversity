@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<ContosoUniversity.Models.Student>
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewData["Title"] = "Index";
@@ -20,14 +23,17 @@
     <thead>
         <tr>
             <th>
-                @Html.ActionLink($"Last name {ViewBag.NameSortSuffix}", "Index", new { sortOrder = ViewBag.NameSortParam, q = ViewBag.QueryParam }, new { @class="text-decoration-none text-black"})
+                @Html.ActionLink($"Last name {ViewBag.NameSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.NameSortParam, q = ViewBag.QueryParam }, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.LastName) *@
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FirstMidName)
+                First and Middle name
             </th>
             <th>
-                @Html.ActionLink($"Enrollment date {ViewBag.DateSortSuffix}", "Index", new { sortOrder = ViewBag.DateSortParam, q = ViewBag.QueryParam }, new { @class="text-decoration-none text-black"})
+                Full name
+            </th>
+            <th>
+                @Html.ActionLink($"Enrollment date {ViewBag.DateSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.DateSortParam, q = ViewBag.QueryParam }, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.EnrollmentDate) *@
             </th>
             <th></th>
@@ -43,6 +49,9 @@
                 @Html.DisplayFor(modelItem => item.FirstMidName)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.EnrollmentDate)
             </td>
             <td>
@@ -54,3 +63,19 @@
 }
     </tbody>
 </table>
+<br />
+@Html.PagedListPager(
+    (IPagedList) Model,
+    page => Url.Action("Index", new {
+        page,
+        sortOrder = ViewBag.CurrentSortParam,
+        q = ViewBag.QueryParam
+    }),
+    new PagedListRenderOptions {
+		UlElementClasses = new [] { "pagination" },
+		LiElementClasses = new [] { "page-item", "page-link" },
+		ActiveLiElementClass = "page-item page-link text-black",
+		PreviousElementClass = "page-item page-link",
+		NextElementClass = "page-item page-link"
+    }
+)

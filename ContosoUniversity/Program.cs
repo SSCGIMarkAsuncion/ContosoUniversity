@@ -1,5 +1,6 @@
 using ContosoUniversity.DAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace ContosoUniversity
 {
@@ -9,10 +10,21 @@ namespace ContosoUniversity
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add EF DbContext with connection string from appsettings.json
-            builder.Services.AddDbContext<SchoolContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolContext")).UseLazyLoadingProxies()
-            );
+            // Add EFCore DbContext
+            // builder.Configuration pulls values from appsettings.json
+            builder.Services.AddDbContext<SchoolContext>(options => {
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("SchoolContext"),
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(10),
+                            errorNumbersToAdd: null
+                        );
+                    }
+                ).UseLazyLoadingProxies();
+            });
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

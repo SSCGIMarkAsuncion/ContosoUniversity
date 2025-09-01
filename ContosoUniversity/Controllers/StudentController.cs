@@ -9,6 +9,8 @@ using ContosoUniversity.DAL;
 using ContosoUniversity.Models;
 using System.Diagnostics;
 using ContosoUniversity.Utils;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace ContosoUniversity.Controllers
 {
@@ -22,7 +24,7 @@ namespace ContosoUniversity.Controllers
         }
 
         // GET: Student
-        public async Task<IActionResult> Index(string sortOrder, string q)
+        public async Task<IActionResult> Index(string sortOrder, string q, int? page=1)
         {
             Sort.Type stype = Sort.From(string.IsNullOrEmpty(sortOrder)? "":sortOrder);
 
@@ -34,6 +36,8 @@ namespace ContosoUniversity.Controllers
             var students = (from s in _context.Students
                             select s);
 
+            int curPage = page.GetValueOrDefault();
+
             if (!string.IsNullOrEmpty(q))
             {
                 students = students.Where(s => s.LastName.ToLower().Contains(q) || s.FirstMidName.ToLower().Contains(q));
@@ -43,7 +47,6 @@ namespace ContosoUniversity.Controllers
             {
                 case Sort.Type.NAME_ASC:
                     students = students.OrderBy(s => s.LastName);
-                    nameSortParam = Sort.Type.NAME_DESC;
                     nameSortSuffix = '▲';
                     break;
                 case Sort.Type.NAME_DESC:
@@ -52,7 +55,6 @@ namespace ContosoUniversity.Controllers
                     break;
                 case Sort.Type.DATE_ASC:
                     students = students.OrderBy(s => s.EnrollmentDate);
-                    dateSortParam = Sort.Type.DATE_DESC;
                     dateSortSuffix = '▲';
                     break;
                 case Sort.Type.DATE_DESC:
@@ -69,7 +71,10 @@ namespace ContosoUniversity.Controllers
             ViewBag.NameSortSuffix = nameSortSuffix;
             ViewBag.DateSortSuffix = dateSortSuffix;
 
-            return View(students.ToList());
+            ViewBag.CurrentSortParam = stype.ToString().ToLower();
+            ViewBag.CurrentPage = curPage;
+
+            return View(students.ToPagedList(curPage, 3));
         }
 
         // GET: Student/Details/5
