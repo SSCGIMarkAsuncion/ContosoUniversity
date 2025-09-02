@@ -4,7 +4,10 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="d-flex gap-1 align-items-center">
+	<a asp-action="Index" class="btn btn-light">❮</a>
+	<h1>Create</h1>
+</div>
 
 <h4>Course</h4>
 <hr />
@@ -39,10 +42,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

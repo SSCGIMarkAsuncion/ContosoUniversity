@@ -101,7 +101,7 @@ namespace ContosoUniversity.Controllers
             {
                 new BreadCrumb() { Name="Home", LinkTo="/" },
                 new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Details", LinkTo=$"/Student/Create", IsCurrent = true },
+                new BreadCrumb() { Name="Create", LinkTo="/Student/Create", IsCurrent = true },
             };
             return View();
         }
@@ -126,6 +126,13 @@ namespace ContosoUniversity.Controllers
             {
                 ModelState.AddModelError("error", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
+
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                new BreadCrumb() { Name="Create", LinkTo="/Student/Create", IsCurrent = true },
+            };
             return View(student);
         }
 
@@ -183,7 +190,15 @@ namespace ContosoUniversity.Controllers
 
             var stud = _context.Students.Single(s => s.Id == id);
             if (stud != null)
+            {
+                ViewBag.BreadCrumbs = new List<BreadCrumb>
+                {
+                    new BreadCrumb() { Name="Home", LinkTo="/" },
+                    new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                    new BreadCrumb() { Name="Edit", LinkTo=$"/Student/Edit/{id}", IsCurrent = true },
+                };
                 return View(student);
+            }
             return RedirectToAction(nameof(Index));
         }
 

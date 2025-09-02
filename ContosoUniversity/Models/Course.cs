@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -10,13 +11,14 @@ namespace ContosoUniversity.Models
     {
         // do not auto increment
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [BindProperty(Name = "Id")]
         [DisplayName("Course Code")]
         new public int Id { get; set; }
 
         [StringLength(50, MinimumLength = 3)]
         public string Title { get; set; }
 
-        [Range(0, 5)]
+        [Range(1, 5)]
         public int Credits { get; set; }
         public int DepartmentID { get; set; }
 

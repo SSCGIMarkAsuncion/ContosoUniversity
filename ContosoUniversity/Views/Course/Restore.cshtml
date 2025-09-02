@@ -1,16 +1,20 @@
 ﻿@model ContosoUniversity.Models.Course
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Restore";
 }
 
 <div class="d-flex gap-1 align-items-center">
 	<a asp-action="Index" class="btn btn-light">❮</a>
-	<h1>Details</h1>
+	<h1>Restore</h1>
 </div>
 
+<h3>Are you sure you want to restore this?</h3>
+<p class="error">
+	@Html.ValidationMessage("error")
+</p>
 <div>
-    <h4>Course</h4>
+	<h4>Course #@Model.Id</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -32,32 +36,15 @@
             @Html.DisplayFor(model => model.Credits)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Department)
+            @Html.DisplayNameFor(model => model.DepartmentID)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Department.Name)
         </dd>
-        <dd>
-            <table class="table">
-                <tr>
-                    <th>Instructors</th>
-                    <th>Location</th>
-                </tr>
-                @foreach (var item in Model.Instructors)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.FullName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.OfficeAssignment.Location)
-                        </td>
-                    </tr>
-                }
-            </table>
-        </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
+    
+    <form asp-action="Restore">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Restore" class="btn btn-success" />
+    </form>
 </div>

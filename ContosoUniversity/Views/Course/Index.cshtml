@@ -1,25 +1,72 @@
-﻿@model IEnumerable<ContosoUniversity.Models.Course>
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IEnumerable<ContosoUniversity.Models.Course>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Courses";
+    bool isArchive = ViewBag.IsArchive == true ? true : false;
+    object sortToName = new
+    {
+        page = ViewBag.CurrentPage,
+        sortOrder = ViewBag.NameSortParam,
+        q = ViewBag.QueryParam,
+    };
+    object sortToCode = new
+    {
+        page = ViewBag.CurrentPage,
+        sortOrder = ViewBag.IdCodeSortParam,
+        q = ViewBag.QueryParam,
+    };
+    object sortToCredit = new {
+        page = ViewBag.CurrentPage,
+        sortOrder = ViewBag.CreditSortParam,
+        q = ViewBag.QueryParam,
+    };
+    object sortToDepartment = new {
+        page = ViewBag.CurrentPage,
+        sortOrder = ViewBag.DepartmentSortParam,
+        q = ViewBag.QueryParam,
+    };
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-<table class="table">
+<div class="d-flex" style="width: 100%;">
+	<h1>Courses</h1>
+	<div class="d-flex gap-2 align-items-center" style="margin-left: auto;">
+		<a asp-action="Create" class="btn btn-primary">Create New</a>
+		@if (isArchive == false)
+		{
+			<a asp-action="Archive" class="btn btn-outline-danger"> Archive </a>
+		}
+	</div>
+</div>
+@using (Html.BeginForm((string)ViewBag.LinkTo, "Course", FormMethod.Get))
+{
+    <div class="d-flex gap-2 align-items-center">
+        <label class="form-label">Find by Title:</label>
+        @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;" })  
+        @Html.Hidden("page", ViewBag.CurrentPage, new {})
+        @Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
+        <input type="submit" value="Search" class="btn btn-primary" />
+    </div>
+}
+
+<table class="table table-bordered table-striped table-hover mt-2">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.ActionLink($"{Html.DisplayNameFor(model => model.Id)} {ViewBag.IdCodeSortSuffix}", (string)ViewBag.LinkTo, sortToCode, new { @class="text-decoration-none text-black"})
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Credits)
+                @Html.ActionLink($"{Html.DisplayNameFor(model => model.Title)} {ViewBag.NameSortSuffix}", (string)ViewBag.LinkTo, sortToName, new { @class="text-decoration-none text-black"})
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Department)
+                @Html.ActionLink($"{Html.DisplayNameFor(model => model.Credits)} {ViewBag.CreditSortSuffix}", (string)ViewBag.LinkTo, sortToCredit, new { @class="text-decoration-none text-black"})
+                @* @Html.DisplayNameFor(model => model.Credits) *@
+            </th>
+            <th>
+                @Html.ActionLink($"{Html.DisplayNameFor(model => model.Department)} {ViewBag.DepartmentSortSuffix}", (string)ViewBag.LinkTo, sortToDepartment, new { @class="text-decoration-none text-black"})
+                @* @Html.DisplayNameFor(model => model.Department) *@
             </th>
             <th></th>
         </tr>
@@ -28,20 +75,57 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Credits)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Department.Id)
+                @Html.DisplayFor(modelItem => item.Department.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (isArchive == false)
+                {
+                    <div class="d-flex gap-1 justify-content-center">
+					<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
+                       <img src="~/static/pen-solid-full.svg" style="width: 18px; height: 18px;" />
+					</a>
+					<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
+                       <img src="~/static/file-solid-full.svg" style="width: 18px; height: 18px;" />
+					</a>
+					<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger d-flex align-content-center justify-content-center" role="button">
+                       <img src="~/static/trash-solid-full.svg" style="width: 18px; height: 18px;" />
+				   </a>
+					</div>
+                }
+                else
+                {
+                    <div class="d-flex gap-1 justify-content-center">
+						<a asp-action="Restore" asp-route-id="@item.Id" class="btn btn-success">Restore</a>
+                    </div>
+                }
             </td>
         </tr>
 }
     </tbody>
 </table>
+<br />
+@Html.PagedListPager(
+    (IPagedList) Model,
+    page => Url.Action((string)ViewBag.LinkTo, new {
+        page,
+        sortOrder = ViewBag.CurrentSortParam,
+        q = ViewBag.QueryParam,
+    }),
+    new PagedListRenderOptions {
+		UlElementClasses = new [] { "pagination" },
+		LiElementClasses = new [] { "page-item" },
+		ActiveLiElementClass = "text-black",
+        PageClasses = new [] { "page-link" },
+		PreviousElementClass = "",
+		NextElementClass = "",
+    }
+)

@@ -16,5 +16,12 @@ namespace ContosoUniversity.Models
         // will use FirstName as column name isntead of FirstMidName
         // [Column("FirstName")]
         public string FirstMidName { get; set; }
+
+        [Display(Name = "Full Name")]
+        public string FullName
+        {
+            get { return LastName + ", " + FirstMidName; }
+        }
+
     }
 }

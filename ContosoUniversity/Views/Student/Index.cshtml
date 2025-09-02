@@ -22,14 +22,14 @@
 }
 
 <div class="d-flex" style="width: 100%;">
-<h1>Students</h1>
-<div class="d-flex gap-2 align-items-center" style="margin-left: auto;">
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-    @if (isArchive == false)
-    {
-        <a asp-action="Archive" class="btn btn-outline-danger"> Archive </a>
-    }
-</div>
+	<h1>Students</h1>
+	<div class="d-flex gap-2 align-items-center" style="margin-left: auto;">
+		<a asp-action="Create" class="btn btn-primary">Create New</a>
+		@if (isArchive == false)
+		{
+			<a asp-action="Archive" class="btn btn-outline-danger"> Archive </a>
+		}
+	</div>
 </div>
 @using (Html.BeginForm((string)ViewBag.LinkTo, "Student", FormMethod.Get))
 {
@@ -41,6 +41,7 @@
         <input type="submit" value="Search" class="btn btn-primary" />
     </div>
 }
+
 <table class="table table-bordered table-striped table-hover mt-2">
     <thead>
         <tr>
