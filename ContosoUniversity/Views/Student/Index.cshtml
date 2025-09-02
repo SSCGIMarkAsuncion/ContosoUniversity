@@ -7,6 +7,18 @@
     ViewData["Title"] = "Students";
     bool isArchive = ViewBag.IsArchive == true ? true : false;
     Student emptyStudent = new Student(); // for headers
+    object sortToName = new
+    {
+		page = ViewBag.CurrentPage,
+        sortOrder = ViewBag.NameSortParam,
+        q = ViewBag.QueryParam,
+    };
+    object sortToDate = new
+    {
+		page = ViewBag.CurrentPage,
+        sortOrder = ViewBag.DateSortParam,
+        q = ViewBag.QueryParam,
+    };
 }
 
 <div class="d-flex" style="width: 100%;">
@@ -15,17 +27,16 @@
     <a asp-action="Create" class="btn btn-primary">Create New</a>
     @if (isArchive == false)
     {
-        <a asp-action="Index" asp-route-archive="@true" class="btn btn-outline-danger"> Archive </a>
+        <a asp-action="Archive" class="btn btn-outline-danger"> Archive </a>
     }
 </div>
 </div>
-@using (Html.BeginForm("Index", "Student", FormMethod.Get))
+@using (Html.BeginForm((string)ViewBag.LinkTo, "Student", FormMethod.Get))
 {
     <div class="d-flex gap-2 align-items-center">
         <label class="form-label">Find by name:</label>
         @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;" })  
         @Html.Hidden("page", ViewBag.CurrentPage, new {})
-        @Html.Hidden("archive", ViewBag.IsArchive, new {})
         @Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
         <input type="submit" value="Search" class="btn btn-primary" />
     </div>
@@ -34,7 +45,7 @@
     <thead>
         <tr>
             <th class="text-center">
-                @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.LastName)} {ViewBag.NameSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.NameSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
+                @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.LastName)} {ViewBag.NameSortSuffix}", (string)ViewBag.LinkTo, sortToName, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.LastName) *@
             </th>
             <th class="text-black text-center">
@@ -44,7 +55,7 @@
                 @Html.DisplayNameFor(_ => emptyStudent.FullName)
             </th>
             <th class="text-center">
-                @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.EnrollmentDate)} {ViewBag.DateSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.DateSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
+                @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.EnrollmentDate)} {ViewBag.DateSortSuffix}", (string)ViewBag.LinkTo, sortToDate, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.EnrollmentDate) *@
             </th>
             <th class="text-black text-center">
@@ -96,7 +107,7 @@
 <br />
 @Html.PagedListPager(
     (IPagedList) Model,
-    page => Url.Action("Index", new {
+    page => Url.Action((string)ViewBag.LinkTo, new {
         page,
         sortOrder = ViewBag.CurrentSortParam,
         q = ViewBag.QueryParam,

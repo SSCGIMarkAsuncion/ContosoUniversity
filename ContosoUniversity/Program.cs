@@ -36,7 +36,7 @@ namespace ContosoUniversity
                 using (var scope = app.Services.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<SchoolContext>();
-                    SchoolInitializer.Seed(context);
+                    //SchoolInitializer.Seed(context);
                 }
             }
 

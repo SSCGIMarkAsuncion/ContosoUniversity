@@ -11,6 +11,7 @@ using System.Diagnostics;
 using ContosoUniversity.Utils;
 using X.PagedList;
 using X.PagedList.Extensions;
+using ContosoUniversity.Utils.Service;
 
 namespace ContosoUniversity.Controllers
 {
@@ -23,71 +24,50 @@ namespace ContosoUniversity.Controllers
             _context = context;
         }
 
-        // GET: Student
-        public async Task<IActionResult> Index(string sortOrder, string q, int? page=1, bool? archive = false)
+        public IQueryable<Student> ApplyFilter(Filter filter)
         {
-            Sort.Type stype = Sort.From(string.IsNullOrEmpty(sortOrder)? "":sortOrder);
+            Filter.Result<Student> results = filter.ApplyToStudents(_context.Students);
+            ViewBag.NameSortParam = results.NameSortParam;
+            ViewBag.DateSortParam = results.DateSortParam;
+            ViewBag.NameSortSuffix = results.NameSortSuffix;
+            ViewBag.DateSortSuffix = results.DateSortSuffix;
+            ViewBag.QueryParam = filter.Q;
+            ViewBag.IsArchive = filter.IsArchive;
 
-            Sort.Type nameSortParam = Sort.Type.NAME_DESC;
-            Sort.Type dateSortParam = Sort.Type.DATE_DESC;
-            char nameSortSuffix = '▼'; //'▲';
-            char dateSortSuffix = '▼';
+            ViewBag.CurrentSortParam = results.CurrentSortParam;
+            ViewBag.CurrentPage = filter.Page;
 
-            var students = (from s in _context.Students
-                            where s.Deleted == archive.GetValueOrDefault()
-                            select s);
+            return results.Queries;
+        }
 
-            int curPage = page.GetValueOrDefault();
-
-            if (!string.IsNullOrEmpty(q))
-            {
-                students = students.Where(s => s.LastName.ToLower().Contains(q) || s.FirstMidName.ToLower().Contains(q));
-            }
-
-            switch (stype)
-            {
-                case Sort.Type.NAME_ASC:
-                    students = students.OrderBy(s => s.LastName);
-                    nameSortSuffix = '▲';
-                    break;
-                case Sort.Type.NAME_DESC:
-                    students = students.OrderByDescending(s => s.LastName);
-                    nameSortParam = Sort.Type.NAME_ASC;
-                    break;
-                case Sort.Type.DATE_ASC:
-                    students = students.OrderBy(s => s.EnrollmentDate);
-                    dateSortSuffix = '▲';
-                    break;
-                case Sort.Type.DATE_DESC:
-                    students = students.OrderByDescending(s => s.EnrollmentDate);
-                    dateSortParam = Sort.Type.DATE_ASC;
-                    break;
-                default:
-                    break;
-            }
-
-            ViewBag.NameSortParam = nameSortParam.ToString().ToLower();
-            ViewBag.DateSortParam = dateSortParam.ToString().ToLower();
-            ViewBag.QueryParam = string.IsNullOrEmpty(q) ? "" : q;
-            ViewBag.NameSortSuffix = nameSortSuffix;
-            ViewBag.DateSortSuffix = dateSortSuffix;
-            ViewBag.IsArchive = archive.GetValueOrDefault();
-
-            ViewBag.CurrentSortParam = stype.ToString().ToLower();
-            ViewBag.CurrentPage = curPage;
+        // GET: Student
+        public async Task<IActionResult> Index([FromQuery] Filter filter)
+        {
+            var query = ApplyFilter(filter);
             ViewBag.BreadCrumbs = new List<BreadCrumb>
             {
                 new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student", IsCurrent = !archive.GetValueOrDefault() },
+                new BreadCrumb() { Name="Student", LinkTo="/Student", IsCurrent = true },
             };
-            if (archive.GetValueOrDefault())
-            {
-                ((List<BreadCrumb>)ViewBag.BreadCrumbs).Add(
-                    new BreadCrumb() { Name="Archive", LinkTo="/Student?archive=True", IsCurrent = true }
-                );
-            }
 
-            return View(students.ToPagedList(curPage, 5));
+            ViewBag.LinkTo = "Index";
+
+            return View(query.ToPagedList(filter.Page, 5));
+        }
+
+        // GET: Student/Archive
+        public async Task<IActionResult> Archive([FromQuery] Filter filter)
+        {
+            filter.IsArchive = true;
+            var query = ApplyFilter(filter);
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                new BreadCrumb() { Name="Archive", LinkTo="/Archive", IsCurrent = true }
+            };
+            ViewBag.LinkTo = "Archive";
+            return View("Index", query.ToPagedList(filter.Page, 5));
         }
 
         // GET: Student/Details/5
