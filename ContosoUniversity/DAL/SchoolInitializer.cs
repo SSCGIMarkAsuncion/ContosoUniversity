@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using ContosoUniversity.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniversity.DAL
 {
@@ -32,25 +33,7 @@ namespace ContosoUniversity.DAL
             new Student{FirstMidName="Laura",LastName="Norman",EnrollmentDate=DateTime.Parse("2003-09-01")},
             new Student{FirstMidName="Nino",LastName="Olivetto",EnrollmentDate=DateTime.Parse("2005-09-01")}
             };
-            context.Students.AddRange(students);
-            context.SaveChanges();
-
-            var enrollments = new List<Enrollment>
-            {
-            new Enrollment{StudentID=1,CourseID=1050,Grade=Grade.A},
-            new Enrollment{StudentID=1,CourseID=4022,Grade=Grade.C},
-            new Enrollment{StudentID=1,CourseID=4041,Grade=Grade.B},
-            new Enrollment{StudentID=2,CourseID=1045,Grade=Grade.B},
-            new Enrollment{StudentID=2,CourseID=3141,Grade=Grade.F},
-            new Enrollment{StudentID=2,CourseID=2021,Grade=Grade.F},
-            new Enrollment{StudentID=3,CourseID=1050},
-            new Enrollment{StudentID=4,CourseID=1050,},
-            new Enrollment{StudentID=4,CourseID=4022,Grade=Grade.F},
-            new Enrollment{StudentID=5,CourseID=4041,Grade=Grade.C},
-            new Enrollment{StudentID=6,CourseID=1045},
-            new Enrollment{StudentID=7,CourseID=3141,Grade=Grade.A},
-            };
-            enrollments.ForEach(s => context.Enrollments.Add(s));
+            context.Set<Student>().AddRange(students);
             context.SaveChanges();
 
             var instructors = new List<Instructor>
@@ -66,7 +49,7 @@ namespace ContosoUniversity.DAL
                 new Instructor { FirstMidName = "Roger",   LastName = "Zheng",
                     HireDate = DateTime.Parse("2004-02-12") }
             };
-            context.Instructors.AddRange(instructors);
+            context.Set<Instructor>().AddRange(instructors);
             context.SaveChanges();
 
             var departments = new List<Department>
@@ -84,7 +67,7 @@ namespace ContosoUniversity.DAL
                     StartDate = DateTime.Parse("2007-09-01"),
                     InstructorID  = instructors.Single( i => i.LastName == "Kapoor").ID }
             };
-            context.Departments.AddRange(departments);
+            context.Set<Department>().AddRange(departments);
             context.SaveChanges();
 
             var courses = new List<Course>
@@ -118,7 +101,83 @@ namespace ContosoUniversity.DAL
                   Instructors = new List<Instructor>()
                 },
             };
-            context.Courses.AddRange(courses);
+            context.Set<Course>().AddRange(courses);
+            context.SaveChanges();
+
+            var officeAssignments = new List<OfficeAssignment>
+            {
+                new OfficeAssignment {
+                    InstructorID = instructors.Single( i => i.LastName == "Fakhouri").ID,
+                    Location = "Smith 17" },
+                new OfficeAssignment {
+                    InstructorID = instructors.Single( i => i.LastName == "Harui").ID,
+                    Location = "Gowan 27" },
+                new OfficeAssignment {
+                    InstructorID = instructors.Single( i => i.LastName == "Kapoor").ID,
+                    Location = "Thompson 304" },
+            };
+            context.Set<OfficeAssignment>().AddRange(officeAssignments);
+            context.SaveChanges();
+
+            var enrollments = new List<Enrollment>
+            {
+                new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Alexander").ID,
+                    CourseID = courses.Single(c => c.Title == "Chemistry" ).CourseID,
+                    Grade = Grade.A
+                },
+                 new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Alexander").ID,
+                    CourseID = courses.Single(c => c.Title == "Microeconomics" ).CourseID,
+                    Grade = Grade.C
+                 },
+                 new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Alexander").ID,
+                    CourseID = courses.Single(c => c.Title == "Macroeconomics" ).CourseID,
+                    Grade = Grade.B
+                 },
+                 new Enrollment {
+                     StudentID = students.Single(s => s.LastName == "Alonso").ID,
+                    CourseID = courses.Single(c => c.Title == "Calculus" ).CourseID,
+                    Grade = Grade.B
+                 },
+                 new Enrollment {
+                     StudentID = students.Single(s => s.LastName == "Alonso").ID,
+                    CourseID = courses.Single(c => c.Title == "Trigonometry" ).CourseID,
+                    Grade = Grade.B
+                 },
+                 new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Alonso").ID,
+                    CourseID = courses.Single(c => c.Title == "Composition" ).CourseID,
+                    Grade = Grade.B
+                 },
+                 new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Anand").ID,
+                    CourseID = courses.Single(c => c.Title == "Chemistry" ).CourseID
+                 },
+                 new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Anand").ID,
+                    CourseID = courses.Single(c => c.Title == "Microeconomics").CourseID,
+                    Grade = Grade.B
+                 },
+                new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Barzdukas").ID,
+                    CourseID = courses.Single(c => c.Title == "Chemistry").CourseID,
+                    Grade = Grade.B
+                 },
+                 new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Li").ID,
+                    CourseID = courses.Single(c => c.Title == "Composition").CourseID,
+                    Grade = Grade.B
+                 },
+                 new Enrollment {
+                    StudentID = students.Single(s => s.LastName == "Justice").ID,
+                    CourseID = courses.Single(c => c.Title == "Literature").CourseID,
+                    Grade = Grade.B
+                 }
+            };
+
+            context.Set<Enrollment>().AddRange(enrollments);
             context.SaveChanges();
         }
     }

@@ -23,10 +23,10 @@ namespace ContosoUniversity.DAL
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.AddInterceptors(new SchoolInterceptorLogging());
             //optionsBuilder.AddInterceptors(new SchoolInterceptorTransientErrors());
-            optionsBuilder.UseSeeding((context, _) =>
-            {
-                SchoolInitializer.Seed((SchoolContext)context);
-            });
+            //optionsBuilder.UseSeeding((context, _) =>
+            //{
+            //    SchoolInitializer.Seed(context);
+            //});
         }
 
         #region SeedOnlyOnCreate
