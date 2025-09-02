@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ContosoUniversity.Models
 {
-    public class Course
+    public class Course : BaseModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [DisplayName("Number")]

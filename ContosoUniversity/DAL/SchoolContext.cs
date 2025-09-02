@@ -1,6 +1,5 @@
 ﻿using ContosoUniversity.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity.Infrastructure.Interception;
 
 namespace ContosoUniversity.DAL
 {

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ContosoUniversity.Models
 {
-    public class Student
+    public class Student : BaseModel
     {
         public int ID { get; set; }
 

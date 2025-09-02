@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ContosoUniversity.Models
 {
-    public class OfficeAssignment
+    public class OfficeAssignment : BaseModel
     {
         [Key]
         [ForeignKey("Instructor")]

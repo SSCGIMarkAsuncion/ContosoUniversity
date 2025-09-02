@@ -5,17 +5,26 @@
 
 @{
     ViewData["Title"] = "Index";
+    bool isArchive = ViewBag.IsArchive == true ? true : false;
+    bool nIsArchive = !isArchive;
 }
 
 <h1>Index</h1>
-<p>
+<p class="d-flex gap-2">
     <a asp-action="Create" class="btn btn-primary">Create New</a>
+	<a asp-action="Index" asp-route-archive="@nIsArchive"
+		class="btn btn-outline-danger">
+        @(isArchive == true? "Index":"Archive")
+    </a>
 </p>
 @using (Html.BeginForm("Index", "Student", FormMethod.Get))
 {
     <div class="d-flex gap-2">
         <label class="form-label">Find by name:</label>
         @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;" })  
+        @Html.Hidden("page", ViewBag.CurrentPage, new {})
+        @Html.Hidden("archive", ViewBag.IsArchive, new {})
+        @Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
         <input type="submit" value="Search" class="btn btn-primary" />
     </div>
 }
@@ -23,7 +32,7 @@
     <thead>
         <tr>
             <th>
-                @Html.ActionLink($"Last name {ViewBag.NameSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.NameSortParam, q = ViewBag.QueryParam }, new { @class="text-decoration-none text-black"})
+                @Html.ActionLink($"Last name {ViewBag.NameSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.NameSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.LastName) *@
             </th>
             <th>
@@ -33,7 +42,7 @@
                 Full name
             </th>
             <th>
-                @Html.ActionLink($"Enrollment date {ViewBag.DateSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.DateSortParam, q = ViewBag.QueryParam }, new { @class="text-decoration-none text-black"})
+                @Html.ActionLink($"Enrollment date {ViewBag.DateSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.DateSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.EnrollmentDate) *@
             </th>
             <th></th>
@@ -55,9 +64,18 @@
                 @Html.DisplayFor(modelItem => item.EnrollmentDate)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                @if (isArchive == false)
+                {
+                    <div>
+					<a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-primary" role="button">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info" role="button">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger" role="button">Delete</a>
+					</div>
+                }
+                else
+                {
+					<a asp-action="Restore" asp-route-id="@item.ID" class="btn btn-success">Restore</a>
+                }
             </td>
         </tr>
 }
@@ -69,7 +87,8 @@
     page => Url.Action("Index", new {
         page,
         sortOrder = ViewBag.CurrentSortParam,
-        q = ViewBag.QueryParam
+        q = ViewBag.QueryParam,
+        archive = ViewBag.IsArchive
     }),
     new PagedListRenderOptions {
 		UlElementClasses = new [] { "pagination" },

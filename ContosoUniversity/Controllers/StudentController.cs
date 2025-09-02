@@ -24,7 +24,7 @@ namespace ContosoUniversity.Controllers
         }
 
         // GET: Student
-        public async Task<IActionResult> Index(string sortOrder, string q, int? page=1)
+        public async Task<IActionResult> Index(string sortOrder, string q, int? page=1, bool? archive = false)
         {
             Sort.Type stype = Sort.From(string.IsNullOrEmpty(sortOrder)? "":sortOrder);
 
@@ -34,6 +34,7 @@ namespace ContosoUniversity.Controllers
             char dateSortSuffix = '▼';
 
             var students = (from s in _context.Students
+                            where s.Deleted == archive.GetValueOrDefault()
                             select s);
 
             int curPage = page.GetValueOrDefault();
@@ -70,6 +71,7 @@ namespace ContosoUniversity.Controllers
             ViewBag.QueryParam = string.IsNullOrEmpty(q) ? "" : q;
             ViewBag.NameSortSuffix = nameSortSuffix;
             ViewBag.DateSortSuffix = dateSortSuffix;
+            ViewBag.IsArchive = archive.GetValueOrDefault();
 
             ViewBag.CurrentSortParam = stype.ToString().ToLower();
             ViewBag.CurrentPage = curPage;
@@ -190,7 +192,7 @@ namespace ContosoUniversity.Controllers
 
             if (saveChangesError.GetValueOrDefault())
             {
-                 ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
+                ModelState.AddModelError("error", "Delete failed. Try again, and if the problem persists see your system administrator.");
             }
             var student = await _context.Students
                 .FirstOrDefaultAsync(m => m.ID == id);
@@ -215,9 +217,9 @@ namespace ContosoUniversity.Controllers
 
                 // Faster deletion
                 // Skips query
-                var del = new Student() { ID = id };
-                _context.Entry(del).State = EntityState.Deleted;
-
+                var del = new Student() { ID = id, Deleted = true };
+                _context.Attach(del);
+                _context.Entry(del).Property(s => s.Deleted).IsModified = true;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException _)
@@ -231,6 +233,47 @@ namespace ContosoUniversity.Controllers
         private bool StudentExists(int id)
         {
             return _context.Students.Any(e => e.ID == id);
+        }
+
+        // GET: Student/Restore/5
+        public async Task<IActionResult> Restore(int? id, bool? saveChangesError = false)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ModelState.AddModelError("error", "Restore failed. Try again, and if the problem persists see your system administrator.");
+            }
+            var student = await _context.Students
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (student == null) return NotFound();
+
+            return View(student);
+        }
+
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        // POST: Student/Restore/5
+        public async Task<IActionResult> ConfirmRestore(int? id)
+        {
+            if (id == null) return NotFound();
+
+            try
+            {
+                var restored = new Student() { ID = (int)id, Deleted = false };
+                _context.Attach(restored);
+                _context.Entry(restored).Property(s => s.Deleted).IsModified = true;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return RedirectToAction(nameof(Restore), new { id, saveChangesError = true });
+            }
+
+            return RedirectToAction(nameof(Index), new { archive = true });
         }
     }
 }
