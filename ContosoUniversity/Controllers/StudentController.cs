@@ -99,7 +99,7 @@ namespace ContosoUniversity.Controllers
             }
 
             var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
                 return NotFound();
@@ -177,7 +177,7 @@ namespace ContosoUniversity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,LastName,FirstMidName,EnrollmentDate")] Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstMidName,EnrollmentDate")] Student student)
         {
             try
             {
@@ -201,7 +201,7 @@ namespace ContosoUniversity.Controllers
                 return Forbid();
             }
 
-            var stud = _context.Students.Single(s => s.ID == id);
+            var stud = _context.Students.Single(s => s.Id == id);
             if (stud != null)
                 return View(student);
             return RedirectToAction(nameof(Index));
@@ -220,7 +220,7 @@ namespace ContosoUniversity.Controllers
                 ModelState.AddModelError("error", "Delete failed. Try again, and if the problem persists see your system administrator.");
             }
             var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
                 return NotFound();
@@ -248,7 +248,7 @@ namespace ContosoUniversity.Controllers
 
                 // Faster deletion
                 // Skips query
-                var del = new Student() { ID = id, Deleted = true };
+                var del = new Student() { Id = id, Deleted = true };
                 _context.Attach(del);
                 _context.Entry(del).Property(s => s.Deleted).IsModified = true;
                 await _context.SaveChangesAsync();
@@ -263,7 +263,7 @@ namespace ContosoUniversity.Controllers
 
         private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.ID == id);
+            return _context.Students.Any(e => e.Id == id);
         }
 
         // GET: Student/Restore/5
@@ -279,7 +279,7 @@ namespace ContosoUniversity.Controllers
                 ModelState.AddModelError("error", "Restore failed. Try again, and if the problem persists see your system administrator.");
             }
             var student = await _context.Students
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null) return NotFound();
 
             ViewBag.BreadCrumbs = new List<BreadCrumb>
@@ -300,7 +300,7 @@ namespace ContosoUniversity.Controllers
 
             try
             {
-                var restored = new Student() { ID = (int)id, Deleted = false };
+                var restored = new Student() { Id = (int)id, Deleted = false };
                 _context.Attach(restored);
                 _context.Entry(restored).Property(s => s.Deleted).IsModified = true;
                 await _context.SaveChangesAsync();

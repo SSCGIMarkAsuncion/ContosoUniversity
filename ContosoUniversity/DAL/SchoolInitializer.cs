@@ -56,48 +56,48 @@ namespace ContosoUniversity.DAL
             {
                 new Department { Name = "English",     Budget = 350000,
                     StartDate = DateTime.Parse("2007-09-01"),
-                    InstructorID  = instructors.Single( i => i.LastName == "Abercrombie").ID },
+                    InstructorID  = instructors.Single( i => i.LastName == "Abercrombie").Id },
                 new Department { Name = "Mathematics", Budget = 100000,
                     StartDate = DateTime.Parse("2007-09-01"),
-                    InstructorID  = instructors.Single( i => i.LastName == "Fakhouri").ID },
+                    InstructorID  = instructors.Single( i => i.LastName == "Fakhouri").Id },
                 new Department { Name = "Engineering", Budget = 350000,
                     StartDate = DateTime.Parse("2007-09-01"),
-                    InstructorID  = instructors.Single( i => i.LastName == "Harui").ID },
+                    InstructorID  = instructors.Single( i => i.LastName == "Harui").Id },
                 new Department { Name = "Economics",   Budget = 100000,
                     StartDate = DateTime.Parse("2007-09-01"),
-                    InstructorID  = instructors.Single( i => i.LastName == "Kapoor").ID }
+                    InstructorID  = instructors.Single( i => i.LastName == "Kapoor").Id }
             };
             context.Set<Department>().AddRange(departments);
             context.SaveChanges();
 
             var courses = new List<Course>
             {
-                new Course {CourseID = 1050, Title = "Chemistry",      Credits = 3,
-                  DepartmentID = departments.Single( s => s.Name == "Engineering").DepartmentID,
+                new Course {Id = 1050, Title = "Chemistry",      Credits = 3,
+                  DepartmentID = departments.Single( s => s.Name == "Engineering").Id,
                   Instructors = new List<Instructor>()
                 },
-                new Course {CourseID = 4022, Title = "Microeconomics", Credits = 3,
-                  DepartmentID = departments.Single( s => s.Name == "Economics").DepartmentID,
+                new Course {Id = 4022, Title = "Microeconomics", Credits = 3,
+                  DepartmentID = departments.Single( s => s.Name == "Economics").Id,
                   Instructors = new List<Instructor>()
                 },
-                new Course {CourseID = 4041, Title = "Macroeconomics", Credits = 3,
-                  DepartmentID = departments.Single( s => s.Name == "Economics").DepartmentID,
+                new Course {Id = 4041, Title = "Macroeconomics", Credits = 3,
+                  DepartmentID = departments.Single( s => s.Name == "Economics").Id,
                   Instructors = new List<Instructor>()
                 },
-                new Course {CourseID = 1045, Title = "Calculus",       Credits = 4,
-                  DepartmentID = departments.Single( s => s.Name == "Mathematics").DepartmentID,
+                new Course {Id = 1045, Title = "Calculus",       Credits = 4,
+                  DepartmentID = departments.Single( s => s.Name == "Mathematics").Id,
                   Instructors = new List<Instructor>()
                 },
-                new Course {CourseID = 3141, Title = "Trigonometry",   Credits = 4,
-                  DepartmentID = departments.Single( s => s.Name == "Mathematics").DepartmentID,
+                new Course {Id = 3141, Title = "Trigonometry",   Credits = 4,
+                  DepartmentID = departments.Single( s => s.Name == "Mathematics").Id,
                   Instructors = new List<Instructor>()
                 },
-                new Course {CourseID = 2021, Title = "Composition",    Credits = 3,
-                  DepartmentID = departments.Single( s => s.Name == "English").DepartmentID,
+                new Course {Id = 2021, Title = "Composition",    Credits = 3,
+                  DepartmentID = departments.Single( s => s.Name == "English").Id,
                   Instructors = new List<Instructor>()
                 },
-                new Course {CourseID = 2042, Title = "Literature",     Credits = 4,
-                  DepartmentID = departments.Single( s => s.Name == "English").DepartmentID,
+                new Course {Id = 2042, Title = "Literature",     Credits = 4,
+                  DepartmentID = departments.Single( s => s.Name == "English").Id,
                   Instructors = new List<Instructor>()
                 },
             };
@@ -117,13 +117,13 @@ namespace ContosoUniversity.DAL
             var officeAssignments = new List<OfficeAssignment>
             {
                 new OfficeAssignment {
-                    InstructorID = instructors.Single( i => i.LastName == "Fakhouri").ID,
+                    InstructorID = instructors.Single( i => i.LastName == "Fakhouri").Id,
                     Location = "Smith 17" },
                 new OfficeAssignment {
-                    InstructorID = instructors.Single( i => i.LastName == "Harui").ID,
+                    InstructorID = instructors.Single( i => i.LastName == "Harui").Id,
                     Location = "Gowan 27" },
                 new OfficeAssignment {
-                    InstructorID = instructors.Single( i => i.LastName == "Kapoor").ID,
+                    InstructorID = instructors.Single( i => i.LastName == "Kapoor").Id,
                     Location = "Thompson 304" },
             };
             context.Set<OfficeAssignment>().AddRange(officeAssignments);
@@ -132,57 +132,57 @@ namespace ContosoUniversity.DAL
             var enrollments = new List<Enrollment>
             {
                 new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Alexander").ID,
-                    CourseID = courses.Single(c => c.Title == "Chemistry" ).CourseID,
+                    StudentID = students.Single(s => s.LastName == "Alexander").Id,
+                    CourseID = courses.Single(c => c.Title == "Chemistry" ).Id,
                     Grade = Grade.A
                 },
                  new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Alexander").ID,
-                    CourseID = courses.Single(c => c.Title == "Microeconomics" ).CourseID,
+                    StudentID = students.Single(s => s.LastName == "Alexander").Id,
+                    CourseID = courses.Single(c => c.Title == "Microeconomics" ).Id,
                     Grade = Grade.C
                  },
                  new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Alexander").ID,
-                    CourseID = courses.Single(c => c.Title == "Macroeconomics" ).CourseID,
+                    StudentID = students.Single(s => s.LastName == "Alexander").Id,
+                    CourseID = courses.Single(c => c.Title == "Macroeconomics" ).Id,
                     Grade = Grade.B
                  },
                  new Enrollment {
-                     StudentID = students.Single(s => s.LastName == "Alonso").ID,
-                    CourseID = courses.Single(c => c.Title == "Calculus" ).CourseID,
+                     StudentID = students.Single(s => s.LastName == "Alonso").Id,
+                    CourseID = courses.Single(c => c.Title == "Calculus" ).Id,
                     Grade = Grade.B
                  },
                  new Enrollment {
-                     StudentID = students.Single(s => s.LastName == "Alonso").ID,
-                    CourseID = courses.Single(c => c.Title == "Trigonometry" ).CourseID,
+                     StudentID = students.Single(s => s.LastName == "Alonso").Id,
+                    CourseID = courses.Single(c => c.Title == "Trigonometry" ).Id,
                     Grade = Grade.B
                  },
                  new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Alonso").ID,
-                    CourseID = courses.Single(c => c.Title == "Composition" ).CourseID,
+                    StudentID = students.Single(s => s.LastName == "Alonso").Id,
+                    CourseID = courses.Single(c => c.Title == "Composition" ).Id,
                     Grade = Grade.B
                  },
                  new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Anand").ID,
-                    CourseID = courses.Single(c => c.Title == "Chemistry" ).CourseID
+                    StudentID = students.Single(s => s.LastName == "Anand").Id,
+                    CourseID = courses.Single(c => c.Title == "Chemistry" ).Id
                  },
                  new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Anand").ID,
-                    CourseID = courses.Single(c => c.Title == "Microeconomics").CourseID,
+                    StudentID = students.Single(s => s.LastName == "Anand").Id,
+                    CourseID = courses.Single(c => c.Title == "Microeconomics").Id,
                     Grade = Grade.B
                  },
                 new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Barzdukas").ID,
-                    CourseID = courses.Single(c => c.Title == "Chemistry").CourseID,
+                    StudentID = students.Single(s => s.LastName == "Barzdukas").Id,
+                    CourseID = courses.Single(c => c.Title == "Chemistry").Id,
                     Grade = Grade.B
                  },
                  new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Li").ID,
-                    CourseID = courses.Single(c => c.Title == "Composition").CourseID,
+                    StudentID = students.Single(s => s.LastName == "Li").Id,
+                    CourseID = courses.Single(c => c.Title == "Composition").Id,
                     Grade = Grade.B
                  },
                  new Enrollment {
-                    StudentID = students.Single(s => s.LastName == "Justice").ID,
-                    CourseID = courses.Single(c => c.Title == "Literature").CourseID,
+                    StudentID = students.Single(s => s.LastName == "Justice").Id,
+                    CourseID = courses.Single(c => c.Title == "Literature").Id,
                     Grade = Grade.B
                  }
             };

@@ -8,15 +8,18 @@ namespace ContosoUniversity.Models
 {
     public class Course : BaseModel
     {
+        // do not auto increment
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [DisplayName("Number")]
-        public int CourseID { get; set; }
+        [DisplayName("Course Code")]
+        new public int Id { get; set; }
 
         [StringLength(50, MinimumLength = 3)]
         public string Title { get; set; }
+
         [Range(0, 5)]
         public int Credits { get; set; }
         public int DepartmentID { get; set; }
+
 
         [ValidateNever]
         public virtual Department Department { get; set; }

@@ -71,13 +71,13 @@
                 @if (isArchive == false)
                 {
                     <div class="d-flex gap-1 justify-content-center">
-					<a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
+					<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
                        <img src="~/static/pen-solid-full.svg" style="width: 18px; height: 18px;" />
 					</a>
-					<a asp-action="Details" asp-route-id="@item.ID" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
+					<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
                        <img src="~/static/file-solid-full.svg" style="width: 18px; height: 18px;" />
 					</a>
-					<a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger d-flex align-content-center justify-content-center" role="button">
+					<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger d-flex align-content-center justify-content-center" role="button">
                        <img src="~/static/trash-solid-full.svg" style="width: 18px; height: 18px;" />
 				   </a>
 					</div>
@@ -85,7 +85,7 @@
                 else
                 {
                     <div class="d-flex gap-1 justify-content-center">
-						<a asp-action="Restore" asp-route-id="@item.ID" class="btn btn-success">Restore</a>
+						<a asp-action="Restore" asp-route-id="@item.Id" class="btn btn-success">Restore</a>
                     </div>
                 }
             </td>
