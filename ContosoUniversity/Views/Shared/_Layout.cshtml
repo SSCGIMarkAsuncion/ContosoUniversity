@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using ContosoUniversity.Utils;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -34,6 +35,24 @@
                 </div>
             </div>
         </nav>
+        @if (ViewBag.BreadCrumbs != null)
+        {
+		<div aria-label="breadcrumb" class="px-4">
+        <ol class="breadcrumb" style="margin-bottom: 0">
+			@foreach (BreadCrumb item in ViewBag.BreadCrumbs)
+			{
+                if (item.IsCurrent)
+                {
+					<li class="breadcrumb-item active">@(item.Name)</li>
+                }
+                else
+                {
+					<li class="breadcrumb-item"><a href="@(item.LinkTo)">@(item.Name)</a></li>
+                }
+			}
+		</ol>
+		</div>
+        }
     </header>
     <div class="container">
         <main role="main" class="pb-3">

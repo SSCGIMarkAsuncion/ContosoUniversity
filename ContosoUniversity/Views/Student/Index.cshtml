@@ -4,22 +4,24 @@
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Students";
     bool isArchive = ViewBag.IsArchive == true ? true : false;
-    bool nIsArchive = !isArchive;
+    Student emptyStudent = new Student(); // for headers
 }
 
-<h1>Index</h1>
-<p class="d-flex gap-2">
+<div class="d-flex" style="width: 100%;">
+<h1>Students</h1>
+<div class="d-flex gap-2 align-items-center" style="margin-left: auto;">
     <a asp-action="Create" class="btn btn-primary">Create New</a>
-	<a asp-action="Index" asp-route-archive="@nIsArchive"
-		class="btn btn-outline-danger">
-        @(isArchive == true? "Index":"Archive")
-    </a>
-</p>
+    @if (isArchive == false)
+    {
+        <a asp-action="Index" asp-route-archive="@true" class="btn btn-outline-danger"> Archive </a>
+    }
+</div>
+</div>
 @using (Html.BeginForm("Index", "Student", FormMethod.Get))
 {
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 align-items-center">
         <label class="form-label">Find by name:</label>
         @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;" })  
         @Html.Hidden("page", ViewBag.CurrentPage, new {})
@@ -28,24 +30,26 @@
         <input type="submit" value="Search" class="btn btn-primary" />
     </div>
 }
-<table class="table">
+<table class="table table-bordered table-striped table-hover mt-2">
     <thead>
         <tr>
-            <th>
-                @Html.ActionLink($"Last name {ViewBag.NameSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.NameSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
+            <th class="text-center">
+                @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.LastName)} {ViewBag.NameSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.NameSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.LastName) *@
             </th>
-            <th>
-                First and Middle name
+            <th class="text-black text-center">
+                @Html.DisplayNameFor(_ => emptyStudent.FirstMidName)
             </th>
-            <th>
-                Full name
+            <th class="text-black text-center">
+                @Html.DisplayNameFor(_ => emptyStudent.FullName)
             </th>
-            <th>
-                @Html.ActionLink($"Enrollment date {ViewBag.DateSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.DateSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
+            <th class="text-center">
+                @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.EnrollmentDate)} {ViewBag.DateSortSuffix}", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.DateSortParam, q = ViewBag.QueryParam, archive = ViewBag.IsArchive }, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.EnrollmentDate) *@
             </th>
-            <th></th>
+            <th class="text-black text-center">
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -66,15 +70,23 @@
             <td>
                 @if (isArchive == false)
                 {
-                    <div>
-					<a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-primary" role="button">Edit</a> |
-					<a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info" role="button">Details</a> |
-					<a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger" role="button">Delete</a>
+                    <div class="d-flex gap-1 justify-content-center">
+					<a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
+                       <img src="~/static/pen-solid-full.svg" style="width: 18px; height: 18px;" />
+					</a>
+					<a asp-action="Details" asp-route-id="@item.ID" class="btn btn-secondary d-flex align-content-center justify-content-center" role="button">
+                       <img src="~/static/file-solid-full.svg" style="width: 18px; height: 18px;" />
+					</a>
+					<a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger d-flex align-content-center justify-content-center" role="button">
+                       <img src="~/static/trash-solid-full.svg" style="width: 18px; height: 18px;" />
+				   </a>
 					</div>
                 }
                 else
                 {
-					<a asp-action="Restore" asp-route-id="@item.ID" class="btn btn-success">Restore</a>
+                    <div class="d-flex gap-1 justify-content-center">
+						<a asp-action="Restore" asp-route-id="@item.ID" class="btn btn-success">Restore</a>
+                    </div>
                 }
             </td>
         </tr>
@@ -92,9 +104,10 @@
     }),
     new PagedListRenderOptions {
 		UlElementClasses = new [] { "pagination" },
-		LiElementClasses = new [] { "page-item", "page-link" },
-		ActiveLiElementClass = "page-item page-link text-black",
-		PreviousElementClass = "page-item page-link",
-		NextElementClass = "page-item page-link"
+		LiElementClasses = new [] { "page-item" },
+		ActiveLiElementClass = "text-black",
+        PageClasses = new [] { "page-link" },
+		PreviousElementClass = "",
+		NextElementClass = "",
     }
 )

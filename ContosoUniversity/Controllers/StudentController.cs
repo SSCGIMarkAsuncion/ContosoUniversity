@@ -75,8 +75,19 @@ namespace ContosoUniversity.Controllers
 
             ViewBag.CurrentSortParam = stype.ToString().ToLower();
             ViewBag.CurrentPage = curPage;
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student", IsCurrent = !archive.GetValueOrDefault() },
+            };
+            if (archive.GetValueOrDefault())
+            {
+                ((List<BreadCrumb>)ViewBag.BreadCrumbs).Add(
+                    new BreadCrumb() { Name="Archive", LinkTo="/Student?archive=True", IsCurrent = true }
+                );
+            }
 
-            return View(students.ToPagedList(curPage, 3));
+            return View(students.ToPagedList(curPage, 5));
         }
 
         // GET: Student/Details/5
@@ -94,12 +105,24 @@ namespace ContosoUniversity.Controllers
                 return NotFound();
             }
 
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                new BreadCrumb() { Name="Details", LinkTo=$"/Student/Details/{id}", IsCurrent = true },
+            };
             return View(student);
         }
 
         // GET: Student/Create
         public IActionResult Create()
         {
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                new BreadCrumb() { Name="Details", LinkTo=$"/Student/Create", IsCurrent = true },
+            };
             return View();
         }
 
@@ -139,6 +162,13 @@ namespace ContosoUniversity.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                new BreadCrumb() { Name="Edit", LinkTo=$"/Student/Edit/{id}", IsCurrent = true },
+            };
             return View(student);
         }
 
@@ -147,37 +177,32 @@ namespace ContosoUniversity.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,LastName,FirstMidName,EnrollmentDate")] Student student)
         {
-            Student? student = null;
             try
             {
-                student = _context.Students.Find(id);
-                if (student == null) return NotFound();
-                bool updateRes = await TryUpdateModelAsync<Student>(
-                    student,
-                    "",
-                    s => s.LastName, s => s.FirstMidName, s => s.EnrollmentDate
-                );
-                if (!updateRes) return Forbid();
-
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Students.Update(student);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            catch (InvalidOperationException _)
+            catch (InvalidOperationException)
             {
                 return NotFound();
             }
-            catch (DbUpdateException _)
+            catch (DbUpdateException)
             {
                 ModelState.AddModelError("error", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
             }
-            catch (Exception _)
+            catch (Exception)
             {
                 return Forbid();
             }
 
-            if (student != null)
+            var stud = _context.Students.Single(s => s.ID == id);
+            if (stud != null)
                 return View(student);
             return RedirectToAction(nameof(Index));
         }
@@ -201,6 +226,12 @@ namespace ContosoUniversity.Controllers
                 return NotFound();
             }
 
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                new BreadCrumb() { Name="Delete", LinkTo=$"/Student/Delete/{id}", IsCurrent = true },
+            };
             return View(student);
         }
 
@@ -251,6 +282,12 @@ namespace ContosoUniversity.Controllers
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (student == null) return NotFound();
 
+            ViewBag.BreadCrumbs = new List<BreadCrumb>
+            {
+                new BreadCrumb() { Name="Home", LinkTo="/" },
+                new BreadCrumb() { Name="Student", LinkTo="/Student" },
+                new BreadCrumb() { Name="Restore", LinkTo=$"/Student/Restore/{id}", IsCurrent = true },
+            };
             return View(student);
         }
 
