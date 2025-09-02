@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,8 +18,11 @@ namespace ContosoUniversity.Models
         public int Credits { get; set; }
         public int DepartmentID { get; set; }
 
+        [ValidateNever]
         public virtual Department Department { get; set; }
+        [ValidateNever]
         public virtual ICollection<Enrollment> Enrollments { get; set; }
+        [ValidateNever]
         public virtual ICollection<Instructor> Instructors { get; set; }
     }
 }

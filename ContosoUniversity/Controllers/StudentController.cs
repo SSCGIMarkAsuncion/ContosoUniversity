@@ -119,7 +119,7 @@ namespace ContosoUniversity.Controllers
             }
             catch (InvalidDataException _)
             {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                ModelState.AddModelError("error", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
             return View(student);
         }
@@ -168,7 +168,7 @@ namespace ContosoUniversity.Controllers
             }
             catch (DbUpdateException _)
             {
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                ModelState.AddModelError("error", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
             }
             catch (Exception _)
             {
