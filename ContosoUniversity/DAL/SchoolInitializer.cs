@@ -104,6 +104,16 @@ namespace ContosoUniversity.DAL
             context.Set<Course>().AddRange(courses);
             context.SaveChanges();
 
+            // Add To Join Table
+            AddInstructorToCourse(context, "Chemistry", "Kapoor");
+            AddInstructorToCourse(context, "Chemistry", "Harui");
+            AddInstructorToCourse(context, "Microeconomics", "Zheng");
+            AddInstructorToCourse(context, "Macroeconomics", "Zheng");
+            AddInstructorToCourse(context, "Calculus", "Fakhouri");
+            AddInstructorToCourse(context, "Trigonometry", "Harui");
+            AddInstructorToCourse(context, "Composition", "Abercrombie");
+            AddInstructorToCourse(context, "Literature", "Abercrombie");
+
             var officeAssignments = new List<OfficeAssignment>
             {
                 new OfficeAssignment {
@@ -179,6 +189,13 @@ namespace ContosoUniversity.DAL
 
             context.Set<Enrollment>().AddRange(enrollments);
             context.SaveChanges();
+        }
+
+        private static void AddInstructorToCourse(SchoolContext context, string courseTitle, string lastName)
+        {
+            // Assume courseTitle and lastName exist on both table
+            Course crs = context.Courses.Single(c => c.Title == courseTitle);
+            crs.Instructors.Add(context.Instructors.Single(i => i.LastName == lastName));
         }
     }
 }
