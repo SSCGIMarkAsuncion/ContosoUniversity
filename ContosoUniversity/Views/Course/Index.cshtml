@@ -42,12 +42,13 @@
 </div>
 @using (Html.BeginForm((string)ViewBag.LinkTo, "Course", FormMethod.Get))
 {
+	@Html.Hidden("page", ViewBag.CurrentPage, new {})
+	@Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
     <div class="d-flex gap-2 align-items-center">
         <label class="form-label">Find:</label>
         @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 240px;", @placeholder="Find by Title or Department" })  
-        @Html.Hidden("page", ViewBag.CurrentPage, new {})
-        @Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
         <input type="submit" value="Search" class="btn btn-primary" />
+		@Html.ActionLink("Clear", (string)ViewBag.LinkTo, new {}, new { @class="btn btn-outline-secondary"})
     </div>
 }
 
