@@ -33,9 +33,9 @@
 <div class="d-flex" style="width: 100%;">
 	<h1>Courses</h1>
 	<div class="d-flex gap-2 align-items-center" style="margin-left: auto;">
-		<a asp-action="Create" class="btn btn-primary">Create New</a>
 		@if (isArchive == false)
 		{
+			<a asp-action="Create" class="btn btn-primary">Create New</a>
 			<a asp-action="Archive" class="btn btn-outline-danger"> Archive </a>
 		}
 	</div>
@@ -43,7 +43,7 @@
 @using (Html.BeginForm((string)ViewBag.LinkTo, "Course", FormMethod.Get))
 {
     <div class="d-flex gap-2 align-items-center">
-        <label class="form-label">Find by Title:</label>
+        <label class="form-label">Find:</label>
         @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;" })  
         @Html.Hidden("page", ViewBag.CurrentPage, new {})
         @Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})

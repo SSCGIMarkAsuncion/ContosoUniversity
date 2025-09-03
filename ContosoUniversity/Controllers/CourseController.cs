@@ -16,6 +16,11 @@ namespace ContosoUniversity.Controllers
     public class CourseController : Controller
     {
         private readonly SchoolContext _context;
+        private List<BreadCrumb> _breadcrumb = new List<BreadCrumb>
+        {
+            new BreadCrumb() { Name="Home", LinkTo="/" },
+            new BreadCrumb() { Name="Course", LinkTo="/Course" },
+        };
 
         public CourseController(SchoolContext context)
         {
@@ -49,13 +54,24 @@ namespace ContosoUniversity.Controllers
         {
             var query = ApplyFilter(filter);
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Course", LinkTo="/Course", IsCurrent = true },
-            };
+            _breadcrumb[1].IsCurrent = true;
+            ViewBag.BreadCrumbs = _breadcrumb;
+
             ViewBag.LinkTo = "Index";
             return View(query.ToPagedList(filter.Page, 5));
+        }
+
+        public async Task<IActionResult> Archive([FromQuery] Filter filter)
+        {
+            filter.IsArchive = true;
+            var query = ApplyFilter(filter);
+
+            _breadcrumb.Add(
+                new BreadCrumb() { Name = "Archive", LinkTo = "/Archive", IsCurrent = true }
+            );
+            ViewBag.BreadCrumbs = _breadcrumb;
+            ViewBag.LinkTo = "Archive";
+            return View("Index", query.ToPagedList(filter.Page, 5));
         }
 
         // GET: Course/Details/5
@@ -74,12 +90,8 @@ namespace ContosoUniversity.Controllers
                 return NotFound();
             }
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Course", LinkTo="/Course" },
-                new BreadCrumb() { Name="Details", LinkTo=$"/Course/Details/{id}", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Details", LinkTo = $"/Course/Details/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
 
             return View(course);
         }
@@ -88,12 +100,8 @@ namespace ContosoUniversity.Controllers
         public IActionResult Create()
         {
             ViewData["DepartmentID"] = GetDepartmentSelectList();
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Course", LinkTo="/Course" },
-                new BreadCrumb() { Name="Create", LinkTo=$"/Course/Create", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Create", LinkTo = $"/Course/Create", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View();
         }
 
@@ -144,12 +152,8 @@ namespace ContosoUniversity.Controllers
             }
             ViewData["DepartmentID"] = GetDepartmentSelectList();
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Course", LinkTo="/Course" },
-                new BreadCrumb() { Name="Edit", LinkTo=$"/Course/Edit/{id}", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Edit", LinkTo = $"/Course/Edit/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(course);
         }
 
@@ -185,12 +189,8 @@ namespace ContosoUniversity.Controllers
             var cs = _context.Courses.Single(s => s.Id == id);
             if (cs != null)
             {
-                ViewBag.BreadCrumbs = new List<BreadCrumb>
-                {
-                    new BreadCrumb() { Name="Home", LinkTo="/" },
-                    new BreadCrumb() { Name="Course", LinkTo="/Course" },
-                    new BreadCrumb() { Name="Edit", LinkTo=$"/Course/Edit/{id}", IsCurrent = true },
-                };
+                _breadcrumb.Add(new BreadCrumb() { Name = "Edit", LinkTo = $"/Course/Edit/{id}", IsCurrent = true });
+                ViewBag.BreadCrumbs = _breadcrumb;
                 ViewData["DepartmentID"] = GetDepartmentSelectList();
                 return View(course);
             }
@@ -217,13 +217,8 @@ namespace ContosoUniversity.Controllers
                 return NotFound();
             }
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Course", LinkTo="/Course" },
-                new BreadCrumb() { Name="Delete", LinkTo=$"/Course/Delete/{id}", IsCurrent = true },
-            };
-
+            _breadcrumb.Add(new BreadCrumb() { Name = "Delete", LinkTo = $"/Course/Delete/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(course);
         }
 
@@ -234,10 +229,8 @@ namespace ContosoUniversity.Controllers
         {
             try
             {
-                var del = new Course() { Id = id, Deleted = true };
-                _context.Attach(del);
-                _context.Entry(del).Property(s => s.Deleted).IsModified = true;
-                await _context.SaveChangesAsync();
+                var del = new Course() { Id = id };
+                await SoftDelete.Delete(_context, del);
             }
             catch (DbUpdateException _)
             {
@@ -262,12 +255,8 @@ namespace ContosoUniversity.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null) return NotFound();
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Course", LinkTo="/Course" },
-                new BreadCrumb() { Name="Restore", LinkTo=$"/Course/Restore/{id}", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Restore", LinkTo = $"/Course/Restore/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(course);
         }
 
@@ -280,17 +269,15 @@ namespace ContosoUniversity.Controllers
 
             try
             {
-                var restored = new Course() { Id = (int)id, Deleted = false };
-                _context.Attach(restored);
-                _context.Entry(restored).Property(s => s.Deleted).IsModified = true;
-                await _context.SaveChangesAsync();
+                var restored = new Course() { Id = (int)id };
+                await SoftDelete.Restore(_context, restored);
             }
             catch (DbUpdateException)
             {
                 return RedirectToAction(nameof(Restore), new { id, saveChangesError = true });
             }
 
-            return RedirectToAction(nameof(Index), new { archive = true });
+            return RedirectToAction(nameof(Archive));
         }
 
         private bool CourseExists(int id)

@@ -18,6 +18,11 @@ namespace ContosoUniversity.Controllers
     public class StudentController : Controller
     {
         private readonly SchoolContext _context;
+        private List<BreadCrumb> _breadcrumb = new List<BreadCrumb>
+        {
+            new BreadCrumb() { Name="Home", LinkTo="/" },
+            new BreadCrumb() { Name="Student", LinkTo="/Student" },
+        };
 
         public StudentController(SchoolContext context)
         {
@@ -44,12 +49,8 @@ namespace ContosoUniversity.Controllers
         public async Task<IActionResult> Index([FromQuery] Filter filter)
         {
             var query = ApplyFilter(filter);
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student", IsCurrent = true },
-            };
-
+            _breadcrumb[1].IsCurrent = true;
+            ViewBag.BreadCrumbs = _breadcrumb;
             ViewBag.LinkTo = "Index";
 
             return View(query.ToPagedList(filter.Page, 5));
@@ -60,12 +61,8 @@ namespace ContosoUniversity.Controllers
         {
             filter.IsArchive = true;
             var query = ApplyFilter(filter);
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Archive", LinkTo="/Archive", IsCurrent = true }
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Archive", LinkTo = "/Archive", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             ViewBag.LinkTo = "Archive";
             return View("Index", query.ToPagedList(filter.Page, 5));
         }
@@ -85,24 +82,16 @@ namespace ContosoUniversity.Controllers
                 return NotFound();
             }
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Details", LinkTo=$"/Student/Details/{id}", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Details", LinkTo = $"/Student/Details/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(student);
         }
 
         // GET: Student/Create
         public IActionResult Create()
         {
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Create", LinkTo="/Student/Create", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Create", LinkTo = "/Student/Create", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View();
         }
 
@@ -122,17 +111,13 @@ namespace ContosoUniversity.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            catch (InvalidDataException _)
+            catch (DbUpdateException)
             {
                 ModelState.AddModelError("error", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Create", LinkTo="/Student/Create", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Create", LinkTo = "/Student/Create", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(student);
         }
 
@@ -144,18 +129,15 @@ namespace ContosoUniversity.Controllers
                 return NotFound();
             }
 
-            var student = await _context.Students.FindAsync(id);
+            var student = await _context.Students
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
                 return NotFound();
             }
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Edit", LinkTo=$"/Student/Edit/{id}", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Edit", LinkTo = $"/Student/Edit/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(student);
         }
 
@@ -191,12 +173,8 @@ namespace ContosoUniversity.Controllers
             var stud = _context.Students.Single(s => s.Id == id);
             if (stud != null)
             {
-                ViewBag.BreadCrumbs = new List<BreadCrumb>
-                {
-                    new BreadCrumb() { Name="Home", LinkTo="/" },
-                    new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                    new BreadCrumb() { Name="Edit", LinkTo=$"/Student/Edit/{id}", IsCurrent = true },
-                };
+                _breadcrumb.Add(new BreadCrumb() { Name = "Edit", LinkTo = $"/Student/Edit/{id}", IsCurrent = true });
+                ViewBag.BreadCrumbs = _breadcrumb;
                 return View(student);
             }
             return RedirectToAction(nameof(Index));
@@ -221,12 +199,8 @@ namespace ContosoUniversity.Controllers
                 return NotFound();
             }
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Delete", LinkTo=$"/Student/Delete/{id}", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Delete", LinkTo = $"/Student/Delete/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(student);
         }
 
@@ -237,16 +211,8 @@ namespace ContosoUniversity.Controllers
         {
             try
             {
-                //var student = await _context.Students.FindAsync(id);
-                //if (student == null) return RedirectToAction(nameof(Index));
-                //_context.Students.Remove(student);
-
-                // Faster deletion
-                // Skips query
-                var del = new Student() { Id = id, Deleted = true };
-                _context.Attach(del);
-                _context.Entry(del).Property(s => s.Deleted).IsModified = true;
-                await _context.SaveChangesAsync();
+                var del = new Student() { Id = id };
+                await SoftDelete.Delete(_context, del);
             }
             catch (DbUpdateException _)
             {
@@ -277,12 +243,8 @@ namespace ContosoUniversity.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null) return NotFound();
 
-            ViewBag.BreadCrumbs = new List<BreadCrumb>
-            {
-                new BreadCrumb() { Name="Home", LinkTo="/" },
-                new BreadCrumb() { Name="Student", LinkTo="/Student" },
-                new BreadCrumb() { Name="Restore", LinkTo=$"/Student/Restore/{id}", IsCurrent = true },
-            };
+            _breadcrumb.Add(new BreadCrumb() { Name = "Restore", LinkTo = $"/Student/Restore/{id}", IsCurrent = true });
+            ViewBag.BreadCrumbs = _breadcrumb;
             return View(student);
         }
 
@@ -295,17 +257,15 @@ namespace ContosoUniversity.Controllers
 
             try
             {
-                var restored = new Student() { Id = (int)id, Deleted = false };
-                _context.Attach(restored);
-                _context.Entry(restored).Property(s => s.Deleted).IsModified = true;
-                await _context.SaveChangesAsync();
+                var restored = new Student() { Id = (int)id };
+                await SoftDelete.Restore(_context, restored);
             }
             catch (DbUpdateException)
             {
                 return RedirectToAction(nameof(Restore), new { id, saveChangesError = true });
             }
 
-            return RedirectToAction(nameof(Index), new { archive = true });
+            return RedirectToAction(nameof(Archive));
         }
     }
 }

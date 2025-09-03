@@ -5,10 +5,13 @@ dotnet ef migrations add InitialCreate --project ContosoUniversity
 dotnet ef database update --project ContosoUniversity
 ```
 
-# ViewBag and ViewData
-## ViewData - is a Dict type object to pass data from controller to view
-## ViewBag - is a wrapper to ViewData that uses dynamic feature of C#
-
+# Read/Write datas
+## ViewData
+is a Dict type object to pass data from controller to view
+## ViewBag
+is a wrapper to ViewData that uses dynamic feature of C#
+## TempData
+Available in Current and Next Request
 
 # Join Table
 

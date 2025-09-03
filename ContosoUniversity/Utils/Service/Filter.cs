@@ -51,7 +51,9 @@ namespace ContosoUniversity.Utils.Service
 
             if (!string.IsNullOrEmpty(Q))
             {
-                courses = courses.Where(s => s.Title.ToLower().Contains(Q.ToLower()));
+                courses = courses.Where(
+                    s => s.Title.ToLower().Contains(Q.ToLower()) || s.Department.Name.ToLower().Contains(Q.ToLower())
+                );
             }
 
             switch (stype)
