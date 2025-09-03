@@ -1,16 +1,18 @@
-﻿@model IEnumerable<ContosoUniversity.ViewModels.EnrollmentDateGroup>
+﻿@using ContosoUniversity.ViewModels
+@model IEnumerable<ContosoUniversity.ViewModels.EnrollmentDateGroup>
 @{
     ViewBag.Title = "Statistics";
+    EnrollmentDateGroup emptyModel = new EnrollmentDateGroup();
 }
 <h2>Student Body Statistics</h2>
 
-<table>
+<table class="table table-bordered table-striped table-hover mt-2">
     <tr>
-        <th>
-            Enrollment Date
+        <th class="text-center">
+            @Html.DisplayNameFor(_ => emptyModel.EnrollmentDate)
         </th>
-        <th>
-            Students
+        <th class="text-center">
+            @Html.DisplayNameFor(_ => emptyModel.StudentCount)
         </th>
     </tr>
 

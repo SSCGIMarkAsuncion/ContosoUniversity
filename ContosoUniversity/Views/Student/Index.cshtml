@@ -45,17 +45,17 @@
 <table class="table table-bordered table-striped table-hover mt-2">
     <thead>
         <tr>
-            <th class="text-center">
+            <th>
                 @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.LastName)} {ViewBag.NameSortSuffix}", (string)ViewBag.LinkTo, sortToName, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.LastName) *@
             </th>
-            <th class="text-black text-center">
+            <th class="text-black">
                 @Html.DisplayNameFor(_ => emptyStudent.FirstMidName)
             </th>
-            <th class="text-black text-center">
+            <th class="text-black">
                 @Html.DisplayNameFor(_ => emptyStudent.FullName)
             </th>
-            <th class="text-center">
+            <th>
                 @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.EnrollmentDate)} {ViewBag.DateSortSuffix}", (string)ViewBag.LinkTo, sortToDate, new { @class="text-decoration-none text-black"})
                 @* @Html.DisplayNameFor(model => model.EnrollmentDate) *@
             </th>
