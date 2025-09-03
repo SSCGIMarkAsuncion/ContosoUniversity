@@ -44,7 +44,7 @@
 {
     <div class="d-flex gap-2 align-items-center">
         <label class="form-label">Find:</label>
-        @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;" })  
+        @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 240px;", @placeholder="Find by Title or Department" })  
         @Html.Hidden("page", ViewBag.CurrentPage, new {})
         @Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
         <input type="submit" value="Search" class="btn btn-primary" />
@@ -52,7 +52,6 @@
 }
 
 <table class="table table-bordered table-striped table-hover mt-2">
-    <thead>
         <tr>
             <th>
                 @Html.ActionLink($"{Html.DisplayNameFor(model => model.Id)} {ViewBag.IdCodeSortSuffix}", (string)ViewBag.LinkTo, sortToCode, new { @class="text-decoration-none text-black"})
@@ -70,8 +69,6 @@
             </th>
             <th></th>
         </tr>
-    </thead>
-    <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
@@ -110,7 +107,6 @@
             </td>
         </tr>
 }
-    </tbody>
 </table>
 <br />
 @Html.PagedListPager(

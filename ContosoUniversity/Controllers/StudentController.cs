@@ -39,6 +39,9 @@ namespace ContosoUniversity.Controllers
             ViewBag.QueryParam = filter.Q;
             ViewBag.IsArchive = filter.IsArchive;
 
+            ViewBag.QueryMinDateParam = filter.MinDate;
+            ViewBag.QueryMaxDateParam = filter.MaxDate;
+
             ViewBag.CurrentSortParam = results.CurrentSortParam;
             ViewBag.CurrentPage = filter.Page;
 

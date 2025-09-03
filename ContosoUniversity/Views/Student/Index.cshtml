@@ -7,17 +7,25 @@
     ViewData["Title"] = "Students";
     bool isArchive = ViewBag.IsArchive == true ? true : false;
     Student emptyStudent = new Student(); // for headers
+
+    var minDate = ViewBag.QueryMinDateParam != null? ((DateTime)ViewBag.QueryMinDateParam).ToString("yyyy-MM-dd"):null;
+    var maxDate = ViewBag.QueryMaxDateParam != null? ((DateTime)ViewBag.QueryMaxDateParam).ToString("yyyy-MM-dd"):null;
+
     object sortToName = new
     {
-		page = ViewBag.CurrentPage,
+        page = ViewBag.CurrentPage,
         sortOrder = ViewBag.NameSortParam,
         q = ViewBag.QueryParam,
+        minDate,
+        maxDate
     };
     object sortToDate = new
     {
 		page = ViewBag.CurrentPage,
         sortOrder = ViewBag.DateSortParam,
         q = ViewBag.QueryParam,
+        minDate,
+        maxDate
     };
 }
 
@@ -33,21 +41,24 @@
 </div>
 @using (Html.BeginForm((string)ViewBag.LinkTo, "Student", FormMethod.Get))
 {
+	@Html.Hidden("page", ViewBag.CurrentPage, new {})
+	@Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
     <div class="d-flex gap-2 align-items-center">
-        <label class="form-label">Find by name:</label>
-        @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;" })  
-        @Html.Hidden("page", ViewBag.CurrentPage, new {})
-        @Html.Hidden("sortOrder", ViewBag.NameSortParam, new {})
+        <label class="form-label" for="q">Filter:</label>
+        @Html.TextBox("q", ViewBag.QueryParam as string, new { @class = "form-control", @style = "max-width: 200px;", @placeholder="Filter name" })  
+
+        <input type="date" name="minDate" class="form-control" value="@(minDate)" style="max-width: 200px" />
+        <span>-</span>
+        <input type="date" name="maxDate" class="form-control" value="@(maxDate)" style="max-width: 200px" />
+
         <input type="submit" value="Search" class="btn btn-primary" />
     </div>
 }
 
 <table class="table table-bordered table-striped table-hover mt-2">
-    <thead>
         <tr>
             <th>
                 @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.LastName)} {ViewBag.NameSortSuffix}", (string)ViewBag.LinkTo, sortToName, new { @class="text-decoration-none text-black"})
-                @* @Html.DisplayNameFor(model => model.LastName) *@
             </th>
             <th class="text-black">
                 @Html.DisplayNameFor(_ => emptyStudent.FirstMidName)
@@ -57,14 +68,11 @@
             </th>
             <th>
                 @Html.ActionLink($"{Html.DisplayNameFor(_ => emptyStudent.EnrollmentDate)} {ViewBag.DateSortSuffix}", (string)ViewBag.LinkTo, sortToDate, new { @class="text-decoration-none text-black"})
-                @* @Html.DisplayNameFor(model => model.EnrollmentDate) *@
             </th>
             <th class="text-black text-center">
                 Actions
             </th>
         </tr>
-    </thead>
-    <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
@@ -103,7 +111,6 @@
             </td>
         </tr>
 }
-    </tbody>
 </table>
 <br />
 @Html.PagedListPager(
@@ -112,7 +119,8 @@
         page,
         sortOrder = ViewBag.CurrentSortParam,
         q = ViewBag.QueryParam,
-        archive = ViewBag.IsArchive
+        minDate,
+        maxDate
     }),
     new PagedListRenderOptions {
 		UlElementClasses = new [] { "pagination" },

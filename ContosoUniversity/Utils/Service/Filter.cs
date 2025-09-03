@@ -1,5 +1,6 @@
 ﻿using ContosoUniversity.Models;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContosoUniversity.Utils.Service
 {
@@ -13,6 +14,9 @@ namespace ContosoUniversity.Utils.Service
         public int Page { get; set; } = 1;
 
         public bool IsArchive { get; set; } = false;
+
+        public DateTime? MinDate { get; set; }
+        public DateTime? MaxDate { get; set; }
 
         public struct Result<T>
         {
@@ -128,6 +132,15 @@ namespace ContosoUniversity.Utils.Service
             if (!string.IsNullOrEmpty(Q))
             {
                 students = students.Where(s => s.LastName.ToLower().Contains(Q) || s.FirstMidName.ToLower().Contains(Q));
+            }
+
+            if (MinDate != null)
+            {
+                students = students.Where(s => s.EnrollmentDate >= MinDate);
+            }
+            if (MaxDate != null)
+            {
+                students = students.Where(s => s.EnrollmentDate <= MaxDate);
             }
 
             switch (stype)
